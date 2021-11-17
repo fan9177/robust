@@ -1,5 +1,5 @@
 clc;clear
-load('D:\BaiduNetdiskWorkspace\代尔夫特\课件\Q2  15\SC42145 Robust Control\Assignments\Assignment_Data_SC42145.mat')
+load('D:\Assignment_Data_SC42145.mat')
 %%
 % open loop Bode plot AND pole-zero map
 SS=ss(A,B,C,D);
