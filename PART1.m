@@ -47,17 +47,18 @@ zeta_d2=1;
 %cn2=(s^2+2*zeta_d2*omega_2*s+omega_2^2)/(s^2+2*zeta_n2*omega_2*s+omega_2^2);
 cn1=tf([25 0.39 1],[25 0.12 1]);
 cn2=tf([0.09 0.037 1],[0.09 0.015 1]);
+% figure()
+% opt=bodeoptions;
+% opt.PhaseWrapping='on';
+% Ln=cn1*cn2*G1;
+% bode(G1,opt)
+% bode(Ln,opt); grid on;
+% hold on
+% bode(cn1);
+% bode(cn2);
+% title('Bode diagram SISO w/filter system (w/phase wrapping)')
 figure()
-opt=bodeoptions;
-opt.PhaseWrapping='on';
-Ln=cn1*cn2*G1;
-bode(Ln,opt); grid on;
-hold on
-bode(cn1);
-bode(cn2);
-title('Bode diagram SISO w/filter system (w/phase wrapping)')
-figure()
-Ciso=  -12.207*(s+1)^2*(s^2 + 13.28*s + 64)^2/(s*(s+100)^2);
+Ciso=-7031.2*(s+1)^2*(s^2 + 13.28*s + 64)/(s*(s+100)^2*(s+10));
 stepinfo(Ciso*Ln/(1+Ciso*Ln))
 step(Ciso*Ln/(1+Ciso*Ln));
 title('Step response SISO CL')
@@ -65,6 +66,7 @@ figure()
 bode(Ciso*Ln/(1+Ciso*Ln));
 title('Bode diagram SISO CL')
 margin(Ciso*Ln/(1+Ciso*Ln))
+bandwidth(Ciso*Ln/(1+Ciso*Ln))
 grid on;
 figure()
 bode(1/(1+Ciso*Ln));
@@ -73,5 +75,7 @@ figure()
 bode(1-1/(1+Ciso*Ln));
 title('Bode diagram SISO CL T')
 
-
+minreal(Ciso*Ln/(1+Ciso*Ln))
+%% 1.4 disturbance
+Gd=TFs(1,3);
 
