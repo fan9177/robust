@@ -1,4 +1,4 @@
-clc;clear
+clc;clear;close all
 %load('D:\Assignment_Data_SC42145.mat')
 load('E:\TU DELFT\Q2\ROBUST\PART1\Assignment_Data_SC42145.mat')
 
@@ -57,7 +57,7 @@ bode(cn1);
 bode(cn2);
 title('Bode diagram SISO w/filter system (w/phase wrapping)')
 figure()
-Ciso=-0.13755*(s^2 + 2*s + 1.452^2)/s;
+Ciso=  -12.207*(s+1)^2*(s^2 + 13.28*s + 64)^2/(s*(s+100)^2);
 stepinfo(Ciso*Ln/(1+Ciso*Ln))
 step(Ciso*Ln/(1+Ciso*Ln));
 title('Step response SISO CL')
