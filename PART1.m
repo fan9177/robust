@@ -95,9 +95,10 @@ hw1=val1.*transpose(inv(val1))
 hw2=val2.*transpose(inv(val2))
 
 %% 2.2
-[p22,z22]=pzmap(G)
-figure()
-pzmap(G)
+G=minreal(G);
+P22=pole(G)
+Z22=tzero(G)
+
 %% 2.7
 %use robust control toolbox (code from Lec 2 Page 41/26)
 s=tf('s');
@@ -106,14 +107,34 @@ Wu=[0.01 0;0 (5*10^-3*s^2+7*10^-4*s+5*10^-5)/(s^2+14*10^-4*s+10^-6)];
 Wp11=(s/1.8+0.8*pi)/(s+8*10^-5*pi);
 Wp=[Wp11 0;0 0.2];
 Wt=[];
-[K,CL,GAM,INFO]=mixsyn(G,Wp,Wu,Wt)
+[K,CL,GAM,INFO]=mixsyn(G,Wp,Wu,Wt);
 P=[Wp -Wp*G;zeros(2) Wu;eye(2) -G]
 inputvar ='[w(2);u(2)]';
 input_to_G='[u]';
 input_to_Wu='[u]';
-input_to_Wp='[w-G*u]';
-outputvar ='[Wp;Wu;w-G*u]';
+input_to_Wp='[w-G]';
+outputvar ='[Wp;Wu;w-G]';
 sysoutname='P';
 sysic;
+P=minreal(P)
 [K2,CL2,GAM2,INFO2]=hinfsyn(P,2,2);
+K2=minreal(K2);
+P=minreal(P);
+size(P)
+size(G)
 size(K2)
+%L22=K2*P;
+%% 2.7  2.8 plot
+%nyquist(K2*G) %(not for MIMO)
+L22=tf(K2)*G;
+figure()
+det11=L22(1,1)+1;
+det12=L22(1,2);
+det21=L22(2,1);
+det22=L22(2,2)+1;
+L2=det11*det22-det12*det21;
+nyquist(L2)
+
+G13=TFs(1,3)
+G23=TFs(2,3)
+Gd=[G13;G23];
