@@ -139,5 +139,55 @@ G13=TFs(1,3)
 G23=TFs(2,3)
 Gd=[G13;G23];
 
-%% 3.2
+%% 3 d
+load('E:\TU DELFT\Q2\ROBUST\robust\td.mat')
+load('E:\TU DELFT\Q2\ROBUST\robust\tvari.mat')
 d=1;
+%tscol = tscollection(Wind_Data);
+%tscol=addts(tscol,Wind_Data,'Fit1')
+%plot(tscol.Fit1,'Color','r')
+tsine=2*sin(pi/500*td);
+d3=tvari-tsine;
+figure()
+plot(td,tvari);
+hold on
+plot(td,tsine);
+figure()
+plot(td,d3);
+
+%% 3.2 3.3 3.4 3.5
+s=tf('s');
+SS=ss(A,B,C,D);
+TFs=tf(SS);
+G11=TFs(1,1);
+G12=TFs(1,2);
+G21=TFs(2,1);
+G22=TFs(2,2);
+G=[G11 G12;G21 G22];
+G13=TFs(1,3);
+G23=TFs(2,3);
+Gd=[G13;G23];
+
+omegalpf=2*pi/1000;
+omegahpf=10;
+LPF=omegalpf/(s+omegalpf);
+HPF=s/(s+omegahpf);
+Wu3=[LPF 0;0 HPF];
+Wp3=(s/2+0.8*pi)/(s+8*10^-5*pi);
+Wt=[];
+
+P3=[Wp*Gd Wp*G;[1;0] Wu;-Gd -G];
+inputvar ='[d(1);u(2)]';
+input_to_G='[u]';
+input_to_Wu='[u]';
+input_to_Wp='[Gd-G]';
+outputvar ='[Wp;Wu;Gd-G]';
+sysoutname='P3';
+sysic;
+P3=minreal(P3);
+[K3,CL3,GAM3,INFO3]=hinfsyn(P3,2,2);
+K3=minreal(K3);
+P3=minreal(P3);
+size(P3)
+size(G)
+size(K3)
