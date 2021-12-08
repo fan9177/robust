@@ -132,7 +132,7 @@ det11=L22(1,1)+1;
 det12=L22(1,2);
 det21=L22(2,1);
 det22=L22(2,2)+1;
-L2=det11*det22-det12*det21;
+L2=minreal(det11*det22-det12*det21);
 nyquist(L2)
 
 G13=TFs(1,3)
@@ -142,7 +142,6 @@ Gd=[G13;G23];
 %% 3 d
 load('E:\TU DELFT\Q2\ROBUST\robust\td.mat')
 load('E:\TU DELFT\Q2\ROBUST\robust\tvari.mat')
-d=1;
 %tscol = tscollection(Wind_Data);
 %tscol=addts(tscol,Wind_Data,'Fit1')
 %plot(tscol.Fit1,'Color','r')
@@ -157,10 +156,14 @@ plot(td,d3);
 figure()
 Y3=fft(tvari);
 pwelch(Wind_Data.data)
-title('Periodogram Using FFT')
+%title('Periodogram Using FFT')
 xlabel('Frequency (Hz)')
 ylabel('Power/Frequency (dB/Hz)')
+
 %% 3.2 3.3 3.4 3.5
+
+dbstop if error
+
 s=tf('s');
 SS=ss(A,B,C,D);
 TFs=tf(SS);
@@ -171,22 +174,30 @@ G22=TFs(2,2);
 G=[G11 G12;G21 G22];
 G13=TFs(1,3);
 G23=TFs(2,3);
-Gd=[G13;G23];
+Gd3=[G13;G23];
 
-omegalpf=2*pi/1000;
-omegahpf=10;
+omegalpf=1/1000;
+omegahpf=1/25;
 LPF=omegalpf/(s+omegalpf);
 HPF=s/(s+omegahpf);
-Wu3=[LPF 0;0 HPF];
-Wp3=(s/2+0.8*pi)/(s+8*10^-5*pi);
+Wu3=[HPF 0;0 LPF];
+
+
+%Wp3a=(s/2+0.8*pi)/(s+8*10^-5*pi);
+Wp3a=makeweight(1e-2,1/800,1e2);
+%Wp3b=makeweight(1e-2,1/50,1e4);
+Wp3=[Wp3a 0;0 Wp3a];
 Wt=[];
 
-P3=[Wp*Gd Wp*G;[1;0] Wu;-Gd -G];
-inputvar ='[d(1);u(2)]';
+%z1=
+systemnames ='G Gd3 Wp3 Wu3'
+P3=[Wp3*Gd3 Wp3*G;[0;0] Wu3;-Gd3 -G];
+inputvar ='[w(2);u(2);d(1)]';
 input_to_G='[u]';
-input_to_Wu='[u]';
-input_to_Wp='[Gd-G]';
-outputvar ='[Wp;Wu;Gd-G]';
+input_to_Gd3='[d]';
+input_to_Wu3='[u]';
+input_to_Wp3='[w-G-Gd3]';
+outputvar ='[Wp3;Wu3;w-G-Gd3]';
 sysoutname='P3';
 sysic;
 P3=minreal(P3);
@@ -196,3 +207,16 @@ P3=minreal(P3);
 size(P3)
 size(G)
 size(K3)
+%% analysis
+figure()
+outputdata=out.simout.Data;
+outputtime=out.simout.Time;
+betaout=outputdata(:,1);
+tauout=outputdata(:,2);
+Ts=1e-4;
+Fs=1/Ts;
+%[T,f]=tfestimate(,)
+
+
+hold on 
+bode(LPF)
