@@ -108,7 +108,7 @@ Wp11=(s/1.8+0.8*pi)/(s+8*10^-5*pi);
 Wp=[Wp11 0;0 0.2];
 Wt=[];
 [K,CL,GAM,INFO]=mixsyn(G,Wp,Wu,Wt);
-P=[Wp -Wp*G;zeros(2) Wu;eye(2) -G]
+P=[Wp -Wp*G;zeros(2) Wu;eye(2) -G];
 inputvar ='[w(2);u(2)]';
 input_to_G='[u]';
 input_to_Wu='[u]';
@@ -154,7 +154,12 @@ hold on
 plot(td,tsine);
 figure()
 plot(td,d3);
-
+figure()
+Y3=fft(tvari);
+pwelch(Wind_Data.data)
+title('Periodogram Using FFT')
+xlabel('Frequency (Hz)')
+ylabel('Power/Frequency (dB/Hz)')
 %% 3.2 3.3 3.4 3.5
 s=tf('s');
 SS=ss(A,B,C,D);
