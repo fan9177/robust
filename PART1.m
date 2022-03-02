@@ -50,7 +50,7 @@ cn2=tf([0.09 0.037 1],[0.09 0.015 1]);
 % figure()
 % opt=bodeoptions;
 % opt.PhaseWrapping='on';
-% Ln=cn1*cn2*G1;
+Ln=cn1*cn2*G1;
 % bode(G1,opt)
 % bode(Ln,opt); grid on;
 % hold on
@@ -184,7 +184,8 @@ Wu3=[HPF 0;0 LPF];
 
 
 %Wp3a=(s/2+0.8*pi)/(s+8*10^-5*pi);
-Wp3a=makeweight(1e-2,1/800,1e2);
+%Wp3a=makeweight(1e-2,1/800,1e2);
+Wp3a=(s/1.8+0.8*pi)/(s+8*10^-5*pi);
 %Wp3b=makeweight(1e-2,1/50,1e4);
 Wp3=[Wp3a 0;0 Wp3a];
 Wt=[];
